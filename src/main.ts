@@ -82,12 +82,12 @@ class State {
         <span>
         ${
           task.status === "doing"
-            ? "started at" + new Date(task.date).toString()
+            ? "started at " + new Date(task.date).toUTCString()
             : ""
         }
         ${
           task.status === "done"
-            ? "finished at" + new Date(task.date).toString()
+            ? "finished at " + new Date(task.date).toUTCString()
             : ""
         }
         </span>
