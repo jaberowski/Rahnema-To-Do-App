@@ -72,18 +72,25 @@ class State {
           .map(
             (item) =>
               `<option ${
-                item === task.label ? 'selected="true"' : ""
+                item.toLowerCase() === task.label ? 'selected="true"' : ""
               } value="${item.toLowerCase()}">${item}</option>`
           )
           .join("")}
          
         </select>
         </Label>
-        <span>${
-          task.status === "doing" || task.status === "done"
-            ? new Date(task.date).toString()
+        <span>
+        ${
+          task.status === "doing"
+            ? "started at" + new Date(task.date).toString()
             : ""
-        }</span>
+        }
+        ${
+          task.status === "done"
+            ? "finished at" + new Date(task.date).toString()
+            : ""
+        }
+        </span>
         <button id="delete-btn-${task.id}">delete</button>
     </li>
     `;
