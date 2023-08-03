@@ -56,7 +56,7 @@ class State {
       task.label ? `background-color:` + task.label.toLowerCase() : ""
     } ; display:flex ; justify-content: space-between;border:2px solid black;padding:2px">
         <span >${task.title}</span>
-        <select id="status-picker-${task.id}">
+        <select class="status-picker" data-id="${task.id}">
         ${["todo", "done", "doing"]
           .map(
             (item) =>
@@ -67,7 +67,7 @@ class State {
           .join("")}
         </select>
         <label>Label: 
-        <select id="label-picker-${task.id}" ">
+        <select class="label-picker" data-id="${task.id}" >
         ${["None", "Red", "Green", "Blue", "Yellow"]
           .map(
             (item) =>
@@ -91,35 +91,43 @@ class State {
             : ""
         }
         </span>
-        <button id="delete-btn-${task.id}">delete</button>
+        <button class="delete-btn" data-id="${task.id}">delete</button>
     </li>
     `;
   }
   draw(): void {
-    console.log(this.data);
     list.innerHTML = "";
     this.data.forEach((task) => {
       list.innerHTML += this.makeItemHtmlElement(task);
+    });
 
-      const statusPicker = document.getElementById(
-        `status-picker-${task.id}`
-      ) as HTMLSelectElement;
+    const allStatusPickers = document.querySelectorAll(
+      ".status-picker"
+    ) as NodeListOf<HTMLSelectElement>;
+    allStatusPickers.forEach((statusPicker) => {
+      const id = Number(statusPicker.dataset.id);
       statusPicker.addEventListener("change", () => {
-        this.changeItemStatus(task.id, statusPicker.value as Status);
+        this.changeItemStatus(id, statusPicker.value as Status);
       });
+    });
 
-      const labelPicker = document.getElementById(
-        `label-picker-${task.id}`
-      ) as HTMLSelectElement;
+    const allLabelPickers = document.querySelectorAll(
+      ".label-picker"
+    ) as NodeListOf<HTMLSelectElement>;
+    allLabelPickers.forEach((labelPicker) => {
+      const id = Number(labelPicker.dataset.id);
       labelPicker.addEventListener("change", () => {
-        this.changeItemLabel(task.id, labelPicker.value as Label);
+        this.changeItemLabel(id, labelPicker.value as Label);
       });
+    });
 
-      const deleteButton = document.getElementById(
-        `delete-btn-${task.id}`
-      ) as HTMLButtonElement;
+    const allDeleteBtn = document.querySelectorAll(
+      ".delete-btn"
+    ) as NodeListOf<HTMLButtonElement>;
+    allDeleteBtn.forEach((deleteButton) => {
       deleteButton.addEventListener("click", () => {
-        this.deleteItem(task.id);
+        const id = Number(deleteButton.dataset.id);
+        this.deleteItem(id);
       });
     });
   }
