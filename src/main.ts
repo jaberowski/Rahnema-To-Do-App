@@ -10,7 +10,6 @@ appDiv.append(button);
 appDiv.append(list);
 
 type Label = "red" | "green" | "yellow" | "blue" | "none";
-type Status = "todo" | "doing" | "done";
 
 type BaseTask = {
   id: number;
@@ -32,6 +31,7 @@ type DoneTask = BaseTask & {
 };
 
 type Task = TodoTask | DoingTask | DoneTask;
+type Status = Task["status"];
 
 class State {
   data: Task[];
@@ -43,14 +43,14 @@ class State {
   makeItem(title: string): TodoTask {
     return { id: Math.floor(Math.random() * 10000), title, status: "todo" };
   }
-  addItem(title: string) {
+  addItem(title: string): void {
     if (title === "") return;
-    const item = this.makeItem(title);
-    this.data.push(item);
+    const newItem = this.makeItem(title);
+    this.data = [...this.data, newItem];
     this.draw();
     console.log(this.data);
   }
-  makeItemHtmlElement(task: Task) {
+  makeItemHtmlElement(task: Task): string {
     return `
     <li style="${
       task.label ? `background-color:` + task.label.toLowerCase() : ""
