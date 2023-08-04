@@ -9,6 +9,21 @@ appDiv.append(input);
 appDiv.append(button);
 appDiv.append(list);
 
+// const filterBox = document.createElement("div");
+// const filterBoxHeader = document.createElement("h3");
+// filterBox.innerText = "filter";
+// const filterLabelPicker = document.createElement("select");
+// const labelArrays = ["red", "green", "yellow", "blue", "none"];
+// const labelOptionElements = labelArrays.map((item) => {
+//   const optionElement = document.createElement("option");
+//   optionElement.style.backgroundColor = item;
+//   optionElement.innerHTML = item;
+//   return optionElement;
+// });
+// filterLabelPicker.append(...labelOptionElements);
+// filterBox.append(filterLabelPicker);
+// appDiv.append(filterBox);
+
 type Label = "red" | "green" | "yellow" | "blue" | "none";
 
 type BaseTask = {
@@ -35,10 +50,45 @@ type Status = Task["status"];
 
 class State {
   data: Task[];
-  sortBy: string;
+  filterBy: {
+    label: Label | undefined;
+    status: Status | undefined;
+    title: string | undefined;
+  };
   constructor() {
-    this.data = [];
-    this.sortBy = "sdfa";
+    this.data = [
+      {
+        status: "done",
+        title: "watch football",
+        id: 918,
+        label: "red",
+        date: 1691141571889,
+      },
+      {
+        status: "done",
+        title: "sleep",
+        id: 6620,
+        label: "green",
+        date: 1691141574465,
+      },
+      { id: 5901, title: "eat", status: "todo", label: "blue" },
+      {
+        status: "doing",
+        title: "movie",
+        id: 2234,
+        label: "red",
+        date: 1691141580904,
+      },
+      {
+        status: "done",
+        title: "rest",
+        id: 2786,
+        label: "yellow",
+        date: 1691141587376,
+      },
+    ];
+
+    this.filterBy = { label: undefined, status: undefined, title: undefined };
   }
   makeItem(title: string): TodoTask {
     return { id: Math.floor(Math.random() * 10000), title, status: "todo" };
@@ -97,7 +147,10 @@ class State {
   }
   draw(): void {
     list.innerHTML = "";
-    this.data.forEach((task) => {
+
+    const filteredData = this.filterData();
+
+    filteredData.forEach((task) => {
       list.innerHTML += this.makeItemHtmlElement(task);
     });
 
@@ -185,9 +238,32 @@ class State {
     this.data = newData;
     this.draw();
   }
+  filterData(): Task[] {
+    const dataFirstFilter = this.filterBy.label
+      ? this.filterByLabel(this.filterBy.label, this.data)
+      : [...this.data];
+    const dataSecondFilter = this.filterBy.status
+      ? this.filterByStatus(this.filterBy.status, dataFirstFilter)
+      : [...dataFirstFilter];
+    const dataThirdFilter = this.filterBy.title
+      ? this.filterBYTitle(this.filterBy.title, dataSecondFilter)
+      : [...dataSecondFilter];
+
+    return dataThirdFilter;
+  }
+  filterByLabel(label: Label, arr = this.data): Task[] {
+    return arr.filter((task) => task.label === label);
+  }
+  filterByStatus(status: Status, arr = this.data): Task[] {
+    return arr.filter((task) => task.status === status);
+  }
+  filterBYTitle(queryString: string, arr = this.data): Task[] {
+    return arr.filter((task) => task.title.includes(queryString));
+  }
 }
 
 const appState = new State();
+appState.draw();
 
 button.addEventListener("click", () => {
   appState.addItem(input.value);
